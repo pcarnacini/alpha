@@ -1,0 +1,481 @@
+/* Tema escuro geral */
+body {
+    background-color: #1e1e1e;
+    color: #ffffff;
+    font-family: Arial, sans-serif;
+    overflow-y: hidden;
+    margin: 0;
+    padding: 0;
+}
+
+/* Estilos específicos para a página de login */
+body.login {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+/* Container de login (inclui logo e formulário) */
+.login-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;  /* Garante que todos os textos também estejam centralizados */
+}
+
+/* Ajuste no tamanho da logo */
+.logo {
+    height: 150px;
+    margin-bottom: 30px;
+}
+
+/* Estilos para o formulário de login */
+.login-form {
+    width: 350px;
+    background-color: #2c2c2c;
+    border-radius: 10px;
+    padding: 30px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4); /* Sombra para destacar */
+    display: flex;
+    flex-direction: column;
+    align-items: center;  /* Centralizar os elementos dentro do formulário */
+}
+
+/* Estilos para os inputs */
+.login-form input {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 15px;
+    margin-top: 15px;
+    background-color: #3a3a3a;
+    color: white;
+    border: 1px solid #555;
+    border-radius: 4px;
+    font-size: 16px;
+    box-sizing: border-box;
+}
+
+/* Estilo para o botão de enrrar */
+.login-form button {
+    width: auto; 
+    padding: 12px 30px;  /* Ajuste no padding para tornar o botão mais "gordo" */
+    margin-top: 10px;
+    cursor: pointer;
+    background-color: #dc3545;
+    border: none;
+    font-size: 16px;
+    color: white;
+    border-radius: 4px;
+    text-align: center;
+    display: block;  /* Garante que o botão seja tratado como um bloco */
+    margin-left: auto;
+    margin-right: auto;  /* Centraliza o botão */
+}
+
+.login-form button:hover {
+    background-color: #c82333;
+}
+
+/* Estilo para o texto de cadastro */
+.register-text {
+    margin-top: 20px;
+    font-size: 14px;
+    text-align: center;
+}
+
+/* Responsividade para telas pequenas */
+@media (max-width: 768px) {
+    body.login {
+        padding: 10px;
+    }
+
+    .login-container {
+        padding: 10px;
+    }
+
+    .login-form {
+        width: 90%;
+        padding: 20px;
+    }
+
+    .logo {
+        height: 120px;
+    }
+
+    .login-form input,
+    .login-form button {
+        padding: 15px;
+        font-size: 18px;
+    }
+}
+
+/* Estilos para o cabeçalho */
+.header {
+    background-color: #2c2c2c;
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.header-title {
+    font-size: 24px;
+    margin: 0;
+}
+
+.logo-agenda {
+    height: 50px;
+}
+
+/* Estilos para o painel de controle */
+.control-panel {
+    margin-bottom: 20px;
+}
+
+/* Estilos para os botões */
+.btn {
+    padding: 10px 20px;
+    margin-left: 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.btn-primary, .btn-danger {
+    background-color: #dc3545;
+    color: white;
+}
+
+.btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Estilos para os filtros */
+.filters {
+    margin-bottom: 20px;
+}
+
+.btn-filter {
+    background-color: #343a40;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    margin-left: 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.btn-filter:hover {
+    background-color: #dc3545;
+}
+
+/* Estilos para o calendário */
+.calendar {
+    background-color: #2c2c2c;
+}
+
+/* Ajustes no FullCalendar */
+.fc-view-container {
+    background-color: #2c2c2c;
+    height: 100%;
+    margin: 25px;
+}
+
+.fc-toolbar, .fc-header-toolbar {
+    margin: 25px; /* Margem interna para a barra de ferramentas */
+}
+
+#calendar {
+    height: calc(100vh - 250px);
+    overflow: auto;
+}
+
+/* Cabeçalhos e dias do calendário */
+.fc-day-header {
+    background-color: #343a40;
+    color: white;
+    padding: 10px;
+}
+
+.fc-day {
+    background-color: #1e1e1e;
+}
+
+.fc-today {
+    background-color: #3a3a3a !important;
+}
+
+.fc-event {
+    background-color: #dc3545;
+    border: 1px solid #dc3545;
+    cursor: pointer;
+}
+
+.fc-event:hover {
+    background-color: #c82333;
+}
+
+/* Estilos para o SweetAlert */
+.swal2-popup {
+    width: 90% !important;
+    max-width: 600px !important;
+    max-height: 95vh !important;
+    background-color: #2c2c2c;
+    color: white;
+    padding: 20px !important;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+}
+
+#swal-calendar {
+    height: 350px;
+    width: 100%;
+    margin-bottom: 15px;
+}
+
+#swal-calendar .fc-view-container {
+    background-color: #3a3a3a;
+    height: 100%;
+    width: 100%;
+}
+
+#swal-calendar .fc-view {
+    height: 100% !important;
+    width: 100%;
+}
+
+.swal2-actions {
+    margin-top: 10px;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+/* Responsividade para SweetAlert */
+@media (max-width: 768px) {
+    .swal2-popup {
+        width: 95% !important;
+        max-width: none !important;
+        margin: 0 auto;
+        padding: 15px !important;
+    }
+
+    #swal-calendar {
+        height: 250px;
+    }
+
+    .swal2-actions {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .swal2-confirm, .swal2-cancel {
+        width: 80%;
+        margin-bottom: 10px;
+    }
+}
+
+/* Formulário dentro do SweetAlert */
+#form-agendamento {
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+}
+
+#form-agendamento label {
+    margin-top: 10px;
+    margin-bottom: 5px;
+    color: white;
+}
+
+#form-agendamento select {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    background-color: #3a3a3a;
+    color: white;
+    border: 1px solid #555;
+    border-radius: 4px;
+}
+
+#form-agendamento select:focus {
+    outline: none;
+    border-color: #dc3545;
+}
+
+/* Botões do SweetAlert */
+.swal2-actions {
+    margin-top: 10px;
+}
+
+.swal2-confirm {
+    background-color: #dc3545 !important;
+}
+
+.swal2-cancel {
+    background-color: #6c757d !important;
+}
+
+/* Responsividade básica */
+@media (max-width: 768px) {
+    .header {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .header-title {
+        margin-bottom: 10px;
+    }
+
+    .btn-filter {
+        margin-bottom: 10px;
+    }
+
+    .swal2-popup {
+        width: 95% !important;
+        margin: 0 auto;
+    }
+
+    #swal-calendar {
+        height: 200px;
+    }
+}
+
+
+/* Estilos Específicos para Cadastro */
+
+body.cadastro {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: #2c2c2c;
+    border-radius: 10px;
+    padding: 30px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+    width: 350px;
+}
+
+.container h2 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.formulario {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.formulario label {
+    margin-top: 10px;
+    margin-bottom: 5px;
+    color: #ffffff;
+    font-size: 14px;
+}
+
+.formulario input {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 15px;
+    background-color: #3a3a3a;
+    color: white;
+    border: 1px solid #555;
+    border-radius: 4px;
+    font-size: 16px;
+    box-sizing: border-box;
+}
+
+.formulario button {
+    width: auto;
+    padding: 12px 30px;
+    margin-top: 10px;
+    cursor: pointer;
+    background-color: #dc3545;
+    border: none;
+    font-size: 16px;
+    color: white;
+    border-radius: 4px;
+    text-align: center;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.formulario button:hover {
+    background-color: #c82333;
+}
+
+/* Responsividade para Cadastro */
+
+@media (max-width: 768px) {
+    body.cadastro {
+        padding: 10px;
+    }
+
+    .container {
+        width: 90%;
+        padding: 20px;
+    }
+
+    input, button {
+        padding: 15px;
+        font-size: 18px;
+    }
+}
+
+/* Estilo para o calendário do SweetAlert */
+#popup-calendar {
+    background-color: #3a3a3a;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    padding: 10px;
+}
+
+#popup-calendar .fc-view-container {
+    background-color: #3a3a3a;
+}
+
+#popup-calendar .fc-day {
+    background-color: #1e1e1e;
+}
+
+#popup-calendar .fc-today {
+    background-color: #97000f !important;
+}
+
+#popup-calendar .fc-day.selected-day {
+    background-color: #ff0019 !important;
+}
+
+#popup-calendar .fc-day-top {
+    height: 25px; 
+    line-height: 25px; 
+    font-size: 12px; 
+}
+
+#popup-calendar .fc-day-grid-event {
+    font-size: 11px;
+    padding: 2px 2px; 
+}
+
+#popup-calendar .fc-day-grid .fc-row {
+    min-height: 25px;
+}

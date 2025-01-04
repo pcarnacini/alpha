@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calendário de Reuniões</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@3.2.0/dist/fullcalendar.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@3.2.0/dist/fullcalendar.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@3.2.0/dist/locale/pt-br.js"></script>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <header class="header">
+        <div class="welcome-text">
+            <h1 class="header-title">Bem vindo, {{ nome }} {{ sobrenome }}!</h1>
+        </div>
+        <img src="{{ url_for('static', filename='logo_alpha_h.png') }}" alt="Logo" class="logo-agenda">
+    </header>
+
+    <main class="main-container">
+        <section class="control-panel">
+            <div class="buttons-left">
+                <button id="botao-agendar" class="btn btn-primary">AGENDAR</button>
+                <button id="botao-cancelar" class="btn btn-danger" disabled>CANCELAR</button>
+            </div>
+        </section>
+
+        <section class="filters">
+            <button class="btn-filter" data-sala="Todas">Todas</button>
+            <button class="btn-filter" data-sala="Sala 1">Sala 1</button>
+            <button class="btn-filter" data-sala="Sala 2">Sala 2</button>
+            <button class="btn-filter" data-sala="Sala Fábrica">Fábrica</button>
+        </section>
+
+        <section id="calendar" class="calendar"></section>
+    </main>
+
+    <script>
+        $(document).ready(function () {
+            let eventoSelecionado = null;
+            const eventos = {{ eventos | tojson | safe }};
+
+            $('#calendar').fullCalendar({
+                locale: 'pt-br',
+                header: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'month,agendaWeek,agendaDay'
+                },
+                height: 'calc(100vh - 250px)',
+                contentHeight: 'auto',
+                events: eventos,
+                timeFormat: 'HH:mm',
+                eventRender: function(event, element) {
+                    element.find('.fc-title').text('');
+
+                    var content = `
+                        <b>${moment(event.start).format('HH:mm')} - ${moment(event.end).format('HH:mm')}</b><br>
+                        ${event.nome} ${event.sobrenome}<br>
+                        Sala: ${event.sala.replace('Sala ', '')}
+                    `;
+
+                    element.find('.fc-time').html(content);
+                },
+                eventClick: handleEventClick
+            });
+
+            $("#botao-agendar").click(function () {
+                let dataSelecionada = null;
+
+                Swal.fire({
+                    title: 'Agendar Reunião',
+                    html: `
+                        <div id="popup-calendar"></div>
+                        <form id="form-agendamento">
+                            <label for="swal-hora-inicio">Início:</label>
+                            <select id="swal-hora-inicio" required>
+                                {% for horario in horarios_disponiveis %}
+                                <option value="{{ horario }}">{{ horario }}</option>
+                                {% endfor %}
+                            </select>
+                            <label for="swal-hora-fim">Fim:</label>
+                            <select id="swal-hora-fim" required>
+                                {% for horario in horarios_disponiveis %}
+                                <option value="{{ horario }}">{{ horario }}</option>
+                                {% endfor %}
+                            </select>
+                            <label for="swal-sala">Sala:</label>
+                            <select id="swal-sala" required>
+                                {% for sala in salas %}
+                                <option value="{{ sala }}">{{ sala }}</option>
+                                {% endfor %}
+                            </select>
+                        </form>
+                    `,
+                    width: '600px',
+                    showCancelButton: true,
+                    confirmButtonText: 'Agendar',
+                    cancelButtonText: 'Cancelar',
+                    didOpen: () => {
+
+                        $('#popup-calendar').fullCalendar({
+                            defaultView: 'month',
+                            height: 'auto',
+                            contentHeight: 'auto',
+                            selectable: true,
+                            dayClick: function (date) {
+                                dataSelecionada = date.format('YYYY-MM-DD');
+                                $('.fc-day').removeClass('selected-day');
+                                $(this).addClass('selected-day');
+                            }
+                        });
+                    },
+                    preConfirm: () => {
+                        if (!dataSelecionada) {
+                            Swal.showValidationMessage('Por favor, selecione uma data');
+                            return false;
+                        }
+                        const horaInicio = $('#swal-hora-inicio').val();
+                        const horaFim = $('#swal-hora-fim').val();
+                        const sala = $('#swal-sala').val();
+                        return { data: dataSelecionada, horaInicio, horaFim, sala };
+                    }
+                }).then((result) => {
+                    if (result.isConfirmed) {
+
+                        $.ajax({
+                            url: "{{ url_for('agenda') }}",
+                            type: 'POST',
+                            data: {
+                                data: result.value.data,
+                                hora_inicio: result.value.horaInicio,
+                                hora_fim: result.value.horaFim,
+                                sala: result.value.sala
+                            },
+                            success: function (response) {
+                                if (response.success) {
+                                    Swal.fire('Sucesso!', 'Reunião agendada com sucesso.', 'success')
+                                        .then(() => {
+                                            location.reload();
+                                        });
+                                } else {
+                                    Swal.fire('Erro!', response.message || 'Não foi possível agendar a reunião.', 'error');
+                                }
+                            },
+                            error: function (xhr, status, error) {
+                                Swal.fire('Erro!', 'Falha ao enviar agendamento: ' + error, 'error');
+                            }
+                        });
+                    }
+                });
+            });
+
+            function handleEventClick(event) {
+                eventoSelecionado = event;
+                Swal.fire({
+                    title: 'Reunião Selecionada',
+                    html: `
+                        <strong>Usuário:</strong> ${event.nome} ${event.sobrenome}<br>
+                        <strong>Sala:</strong> ${event.sala}<br>
+                        <strong>Horário:</strong> ${moment(event.start).format('HH:mm')} - ${moment(event.end).format('HH:mm')}
+                    `,
+                    icon: 'info',
+                    confirmButtonText: 'OK'
+                });
+                $("#botao-cancelar").prop("disabled", false);
+            }
+
+            $("#botao-cancelar").click(() => {
+                if (!eventoSelecionado) return;
+
+                Swal.fire({
+                    title: 'Você tem certeza?',
+                    text: 'Esta ação cancelará a reunião selecionada.',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
+                    confirmButtonText: 'Sim, cancelar!',
+                    cancelButtonText: 'Não, voltar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        cancelarEvento();
+                    }
+                });
+            });
+
+            function cancelarEvento() {
+                $.ajax({
+                    url: "{{ url_for('cancelar') }}",
+                    type: 'POST',
+                    data: {
+                        agendamento_id: eventoSelecionado.id,
+                        usuario: "{{ usuario }}"
+                    },
+                    success: function () {
+                        Swal.fire('Cancelado!', 'A reunião foi cancelada com sucesso.', 'success')
+                            .then(() => {
+                                location.reload(); // Recarrega a página
+                            });
+                    },
+                    error: function () {
+                        Swal.fire('Erro!', 'Não foi possível cancelar a reunião. Tente novamente.', 'error');
+                    }
+                });
+            }
+
+            function resetarSelecao() {
+                eventoSelecionado = null;
+                $("#botao-cancelar").prop("disabled", true);
+            }
+
+            function filtrarEventosPorSala(sala) {
+                $('#calendar').fullCalendar('removeEvents');
+                if (sala === "Todas") {
+                    $('#calendar').fullCalendar('addEventSource', eventos);
+                } else {
+                    const eventosFiltrados = eventos.filter(evento => evento.sala === sala);
+                    $('#calendar').fullCalendar('addEventSource', eventosFiltrados);
+                }
+            }
+
+            $(".btn-filter").click(function() {
+                const sala = $(this).data("sala");
+                filtrarEventosPorSala(sala);
+            });
+        });
+    </script>
+</body>
+</html>

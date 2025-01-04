@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body class="cadastro">
+    <div class="container">
+        <h2>Cadastro de Usuário</h2>
+        <form method="POST" action="{{ url_for('cadastro') }}" class="formulario" id="formCadastro">
+            <label for="nome">Nome:</label>
+            <input type="text" name="nome" id="nome" placeholder="Digite seu nome" required>
+            <label for="sobrenome">Sobrenome:</label>
+            <input type="text" name="sobrenome" id="sobrenome" placeholder="Digite seu sobrenome" required>
+            <label for="usuario">Usuário:</label>
+            <input type="text" name="usuario" id="usuario" placeholder="Crie um nome de usuário" required>
+            <label for="email">E-mail:</label>
+            <input type="email" name="email" id="email" placeholder="Digite seu e-mail" required>
+            <label for="senha">Senha:</label>
+            <input type="password" name="senha" id="senha" placeholder="Crie uma senha" required>
+            <button type="submit" class="btn">Cadastrar</button>
+        </form>
+    </div>
+    <script>
+        // Função para formatar os campos nome e sobrenome
+        function formatarNomeSobrenome(nome) {
+            return nome
+                .toLowerCase()
+                .replace(/^(.)/, (match) => match.toUpperCase());
+        }
+
+        $(document).ready(function() {
+            $('#formCadastro').on('submit', function(e) {
+                e.preventDefault();
+
+                var nome = formatarNomeSobrenome($('#nome').val());
+                var sobrenome = formatarNomeSobrenome($('#sobrenome').val());
+                var usuario = $('#usuario').val().toLowerCase();  // O nome de usuário será sempre em minúsculas
+
+                $('#nome').val(nome);
+                $('#sobrenome').val(sobrenome);
+                $('#usuario').val(usuario);
+
+                this.submit();
+            });
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                Swal.fire({
+                    title: '{{ message }}',
+                    icon: '{{ 'success' if category == 'success' else 'error' }}',
+                    confirmButtonText: 'OK'
+                });
+                {% endfor %}
+            {% endif %}
+            {% endwith %}
+        });
+    </script>
+</body>
+</html>
